@@ -7,25 +7,25 @@ class SetFileLockError(Exception):
 
 
 def lock_factory():
-    locked_files = set([])
+    write_locked_files = set([])
 
-    def set_lock(filename):
-        nonlocal locked_files
-        if filename in locked_files:
-            raise SetFileLockError("The file is already locked!")
-        locked_files.add(filename)
+    def set_write_lock(filename):
+        nonlocal write_locked_files
+        if filename in write_locked_files:
+            raise SetFileLockError("File is already locked!")
+        write_locked_files.add(filename)
 
-    def is_locked(filename):
-        nonlocal locked_files
-        return filename in locked_files
+    def is_write_locked(filename):
+        nonlocal write_locked_files
+        return filename in write_locked_files
 
-    def release_lock(filename):
-        nonlocal locked_files
-        locked_files.remove(filename)
+    def release_write_lock(filename):
+        nonlocal write_locked_files
+        write_locked_files.remove(filename)
 
-    return (set_file_lock, is_file_locked, release_file_lock)
+    return (set_write_lock, is_write_locked, release_write_lock)
 
 
-set_file_lock, is_file_locked, release_file_lock = lock_factory()
+set_write_lock, is_write_locked, release_write_lock = lock_factory()
 
-import writelock
+from filelock.writelock import WriteLock

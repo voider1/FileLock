@@ -1,7 +1,7 @@
 import time
 
-from filelock import (set_file_lock, is_locked, release_file_lock, FileLockError,
-                      SetFileLockError)
+from filelock import (set_write_lock, is_write_locked, release_write_lock,
+                      FileLockError, SetFileLockError)
 
 
 class WriteLock:
@@ -17,27 +17,33 @@ class WriteLock:
 
         while True:
             try:
-                set_file_lock(self.filename)
+                set_write_lock(self.filename)
+                print("Acquired lock!")
                 break
-            except SetFileLockError("Can't set file lock."):
+            except SetFileLockError:
                 if time.time() - start_time >= self.timeout:
                     raise FileLockError("A timeout occured!")
                 time.sleep(self.delay)
 
     def release_lock(self):
-        if is_locked:
-            release_file_lock(self.filename)
+        if is_write_locked:
+            release_write_lock(self.filename)
 
     def __enter__(self):
-        if not is_locked(self.filename):
-            self.acquire_lock(self.filename)
-            self.file = open(self.filename, self.mode)
-            return self.file
+        self.acquire_lock(self.filename)
+        self.file = open(self.filename, self.mode)
+        return self.file
 
-    def __exit__(self):
-        if is_locked(self.filename):
+    def __exit__(self, type, value, traceback):
+        if is_write_locked(self.filename):
+            if self.file is not None:
+                self.file.close()
+
             self.release_lock()
-            self.file.close()
 
     def __del__(self):
-        self.release_lock(self.filename)
+        if is_write_locked(self.filename):
+            if self.file is not None:
+                self.file.close()
+
+            self.release_lock()
