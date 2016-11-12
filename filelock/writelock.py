@@ -18,7 +18,6 @@ class WriteLock:
         while True:
             try:
                 set_write_lock(self.filename)
-                print("Acquired lock!")
                 break
             except SetFileLockError:
                 if time.time() - start_time >= self.timeout:
