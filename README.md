@@ -14,7 +14,7 @@ with ReadLock("file.extension", "r", timeout=10, delay=0.5) as f:
 with WriteLock("file.extension", "r", timeout=10, delay=0.5) as f:
     print(f.read())
 
-with ReadWriteeLock("file.extension", "r", timeout=10, delay=0.5) as f:
+with ReadWriteLock("file.extension", "r", timeout=10, delay=0.5) as f:
     print(f.read())
 ```
 
