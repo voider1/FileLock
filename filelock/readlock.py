@@ -2,18 +2,12 @@ import time
 
 from filelock import (set_read_lock, is_read_locked, release_read_lock,
                       FileLockError, SetFileLockError)
+from filelock.lock import Lock
 
 
-class ReadLock:
+class ReadLock(Lock):
     """A read lock class, use as a context manager
        Makes sure only one process can write to it."""
-
-    def __init__(self, filename, mode, timeout=10, delay=0.5):
-        self.filename = filename
-        self.mode = mode
-        self.timeout = timeout
-        self.delay = delay
-        self.file = None
 
     def acquire_lock(self, filename):
         """Tries to lock the file for writing."""

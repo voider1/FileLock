@@ -2,18 +2,12 @@ import time
 
 from filelock import (set_write_lock, is_write_locked, release_write_lock,
                       FileLockError, SetFileLockError)
+from filelock.lock import Lock
 
 
-class WriteLock:
+class WriteLock(Lock):
     """A write lock class, use as a context manager.
        Makes sure only one process can write to it."""
-
-    def __init__(self, filename, mode, timeout=10, delay=0.5):
-        self.filename = filename
-        self.mode = mode
-        self.timeout = timeout
-        self.delay = delay
-        self.file = None
 
     def acquire_lock(self, filename):
         """Tries to lock the file for writing."""
