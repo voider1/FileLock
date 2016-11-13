@@ -65,5 +65,6 @@ set_write_lock, is_write_locked, release_write_lock, set_read_lock, \
         is_read_locked, release_read_lock, set_readwrite_lock, \
         is_readwrite_locked, release_readwrite_lock = lock_factory()
 
+from filelock.readwritelock import ReadWriteLock
 from filelock.readlock import ReadLock
 from filelock.writelock import WriteLock
