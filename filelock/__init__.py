@@ -44,12 +44,26 @@ def lock_factory():
         except KeyError:
             raise ValueError("File is not read locked.")
 
+    def set_readwrite_lock(filename):
+        set_read_lock(filename)
+        set_write_lock(filename)
+
+    def is_readwrite_locked(filename):
+        is_read_locked(filename)
+        is_write_locked(filename)
+
+    def release_readwrite_lock(filename):
+        release_read_lock(filename)
+        release_write_lock(filename)
+
     return (set_write_lock, is_write_locked, release_write_lock, set_read_lock,
-            is_read_locked, release_read_lock)
+            is_read_locked, release_read_lock, set_readwrite_lock,
+            is_readwrite_locked, release_readwrite_lock)
 
 
 set_write_lock, is_write_locked, release_write_lock, set_read_lock, \
-        is_read_locked, release_read_lock = lock_factory()
+        is_read_locked, release_read_lock, set_readwrite_lock, \
+        is_readwrite_locked, release_readwrite_lock = lock_factory()
 
 from filelock.readlock import ReadLock
 from filelock.writelock import WriteLock
