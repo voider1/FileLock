@@ -5,6 +5,9 @@ from filelock import (set_write_lock, is_write_locked, release_write_lock,
 
 
 class WriteLock:
+    """A write lock class, use as a context manager.
+       Makes sure only one process can write to it."""
+
     def __init__(self, filename, mode, timeout=10, delay=0.5):
         self.filename = filename
         self.mode = mode
@@ -13,6 +16,8 @@ class WriteLock:
         self.file = None
 
     def acquire_lock(self, filename):
+        """Tries to lock the file for writing."""
+
         start_time = time.time()
 
         while True:
@@ -25,24 +30,26 @@ class WriteLock:
                 time.sleep(self.delay)
 
     def release_lock(self):
-        if is_write_locked:
+        """Remove the lock from the file and close file for reading/writing."""
+
+        if is_write_locked(self.filename):
+            if self.file is not None:
+                self.file.close()
             release_write_lock(self.filename)
 
     def __enter__(self):
+        """Give back a file when entering the context and put a lock on it."""
+
         self.acquire_lock(self.filename)
         self.file = open(self.filename, self.mode)
         return self.file
 
     def __exit__(self, type, value, traceback):
-        if is_write_locked(self.filename):
-            if self.file is not None:
-                self.file.close()
+        """Remove the lock from the file and close the file."""
 
-            self.release_lock()
+        self.release_lock()
 
     def __del__(self):
-        if is_write_locked(self.filename):
-            if self.file is not None:
-                self.file.close()
+        """Make sure there are no lingering locks."""
 
-            self.release_lock()
+        self.release_lock()
